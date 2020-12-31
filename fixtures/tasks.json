@@ -1,0 +1,47 @@
+[
+  {
+    "model": "todo.task",
+    "pk": 1,
+    "fields": {
+      "title": "Write an article about X",
+      "description": "here is some links that may help me:\r\n- aymaneMx.com/posts xD",
+      "status": 3
+    }
+  },
+  {
+    "model": "todo.task",
+    "pk": 2,
+    "fields": {
+      "title": "Read the X book",
+      "description": "I should definitely find some time to read this book!!!",
+      "status": 2
+    }
+  },
+  {
+    "model": "todo.task",
+    "pk": 3,
+    "fields": {
+      "title": "Learn X framework",
+      "description": "this one looks really interesting, I should take a look at it!",
+      "status": 1
+    }
+  },
+  {
+    "model": "todo.task",
+    "pk": 4,
+    "fields": {
+      "title": "Fix duplicated X bug",
+      "description": "",
+      "status": 0
+    }
+  },
+  {
+    "model": "todo.task",
+    "pk": 5,
+    "fields": {
+      "title": "Write an article about Y",
+      "description": "this one looks really interesting, I should take a look at it!",
+      "status": 0
+    }
+  }
+]

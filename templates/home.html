@@ -3,52 +3,80 @@
 {% block title %}Home{% endblock %}
 
 {% block content %}
-<div class="row justify-content-center" style="margin-top: 50px">
+<div class="row justify-content-center">
 
-    <div class="row">
-        <div class="col-lg-6 mx-auto">
-            <header class="text-center pb-5">
-                <h1 class="h2">Quotes</h1>
-            </header>
-        </div>
-    </div>
+    <div class="row bg-white p-5 shadow rounded">
+        <header class="text-center pb-5">
+            <h1 class="h2">Your Tasks!</h1>
+        </header>
 
-    <div class="row">
-        <div class="col-lg-6 mx-auto">
+        <div class="col-sm">
+            <h6 class="h6">Backlog</h6>
 
-            <blockquote class="blockquote blockquote-custom bg-white p-5 shadow rounded">
-                <div class="blockquote-custom-icon bg-info shadow-sm"><i class="fa fa-quote-left text-white"></i></div>
-                {% if quotes %}
-                {% for quote in quotes %}
-
-                <div class="row p-2">
-                    <div class="col-2">
-                        <div class="btn-group-vertical" role="group" aria-label="Basic example">
-                            <button type="button" class="btn btn-outline-dark"><i class="fa fa-arrow-up"></i>
-                            </button>
-                            <button type="button" class="btn btn-outline-dark" disabled>{{quote.up_votes}}</button>
-                            <button type="button" class="btn btn-outline-dark"><i class="fa fa-arrow-down"></i></button>
-                        </div>
-                    </div>
-
-                    <div class="col-9">
-                        <p class="mb-0 mt-2 font-italic">{{quote.value}}</p>
-                        <footer class="blockquote-footer pt-4">{{quote.author}}</footer>
-                    </div>
+            {% for task in backlog_tasks%}
+            <div class="card border-dark mb-3">
+                <div class="card-body text-dark">
+                    <h5 class="card-title">{{task.title}}</h5>
+                    <p class="card-text">{{task.description}}</p>
+                    <a href="#" class="card-link"><i class="fa fa-trash-o"></i></a>
+                    <a href="#" class="card-link"><i class="fa fa-pencil-square-o"></i></a>
                 </div>
+            </div>
+            {% endfor %}
 
-                {% endfor %}
-                {% else %}
-                <p class="mb-0 mt-2 font-italic">Sorry, no quotes!</p>
-                {% endif %}
-            </blockquote>
 
         </div>
-        <div class="text-center py-2">
-            <small>
-                <a href="aymaneMx.com" class="text-muted">aymaneMx©</a>
-            </small>
+        <div class="col-sm">
+            <h6 class="h6">Todo</h6>
+
+            {% for task in todo_tasks%}
+            <div class="card border-dark mb-3">
+                <div class="card-body text-dark">
+                    <h5 class="card-title">{{task.title}}</h5>
+                    <p class="card-text">{{task.description}}</p>
+                    <a href="#" class="card-link"><i class="fa fa-trash-o"></i></a>
+                    <a href="#" class="card-link"><i class="fa fa-pencil-square-o"></i></a>
+                </div>
+            </div>
+            {% endfor %}
+
         </div>
+        <div class="col-sm">
+            <h6 class="h6">In Progress</h6>
+
+            {% for task in in_progress_tasks%}
+            <div class="card border-dark mb-3">
+                <div class="card-body text-dark">
+                    <h5 class="card-title">{{task.title}}</h5>
+                    <p class="card-text">{{task.description}}</p>
+                    <a href="#" class="card-link"><i class="fa fa-trash-o"></i></a>
+                    <a href="#" class="card-link"><i class="fa fa-pencil-square-o"></i></a>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        <div class="col-sm">
+            <h6 class="h6">Done</h6>
+
+            {% for task in done_tasks%}
+            <div class="card border-dark mb-3">
+                <div class="card-body text-dark">
+                    <h5 class="card-title">{{task.title}}</h5>
+                    <p class="card-text">{{task.description}}</p>
+                    <a href="#" class="card-link"><i class="fa fa-trash-o"></i></a>
+                    <a href="#" class="card-link"><i class="fa fa-pencil-square-o"></i></a>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+
     </div>
+
+    <div class="text-center py-2">
+        <small>
+            <a href="aymaneMx.com" class="text-muted">aymaneMx©</a>
+        </small>
+    </div>
+
 </div>
 {% endblock %}

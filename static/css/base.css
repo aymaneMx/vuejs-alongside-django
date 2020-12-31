@@ -1,28 +1,3 @@
-.blockquote-custom {
-    position: relative;
-    font-size: 1.1rem;
-}
-
-.blockquote-custom-icon {
-    width: 50px;
-    height: 50px;
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    position: absolute;
-    top: -25px;
-    left: 50px;
-}
-
-
-/*
-*
-* ==========================================
-* FOR DEMO PURPOSES
-* ==========================================
-*
-*/
 body {
     background: #eff0eb;
     background-image: url('https://i.postimg.cc/MTbfnkj6/bg.png');
