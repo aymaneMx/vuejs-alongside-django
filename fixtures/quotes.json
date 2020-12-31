@@ -1,0 +1,62 @@
+[
+  {
+    "model": "quotes.quote",
+    "pk": 1,
+    "fields": {
+      "value": "“I'm selfish, impatient and a little insecure. I make mistakes, I am out of control and at times hard to handle. But if you can't handle me at my worst, then you sure as hell don't deserve me at my best.”",
+      "up_votes": 12,
+      "down_votes": 2,
+      "author": "Marilyn Monroe"
+    }
+  },
+  {
+    "model": "quotes.quote",
+    "pk": 2,
+    "fields": {
+      "value": "“Be yourself; everyone else is already taken.”",
+      "up_votes": 23,
+      "down_votes": 3,
+      "author": "Oscar Wilde"
+    }
+  },
+  {
+    "model": "quotes.quote",
+    "pk": 3,
+    "fields": {
+      "value": "“Two things are infinite: the universe and human stupidity; and I'm not sure about the universe.”",
+      "up_votes": 55,
+      "down_votes": 3,
+      "author": "Albert Einstein"
+    }
+  },
+  {
+    "model": "quotes.quote",
+    "pk": 4,
+    "fields": {
+      "value": "“So many books, so little time.”",
+      "up_votes": 44,
+      "down_votes": 4,
+      "author": "Frank Zappa"
+    }
+  },
+  {
+    "model": "quotes.quote",
+    "pk": 5,
+    "fields": {
+      "value": "“A room without books is like a body without a soul.”",
+      "up_votes": 83,
+      "down_votes": 4,
+      "author": "Marcus Tullius Cicero"
+    }
+  },
+  {
+    "model": "quotes.quote",
+    "pk": 6,
+    "fields": {
+      "value": "“Be who you are and say what you feel, because those who mind don't matter, and those who matter don't mind.”",
+      "up_votes": 73,
+      "down_votes": 2,
+      "author": "Bernard M. Baruch"
+    }
+  }
+]
