@@ -3,7 +3,7 @@
 {% block title %}Home{% endblock %}
 
 {% block content %}
-<div class="row justify-content-center">
+<div id="vue-app" class="row justify-content-center">
 
     <div class="row bg-white p-5 shadow rounded">
         <header class="text-center pb-5">
@@ -13,61 +13,53 @@
         <div class="col-sm">
             <h6 class="h6">Backlog</h6>
 
-            {% for task in backlog_tasks%}
-            <div class="card border-dark mb-3">
+            <div class="card border-dark mb-3" v-for="task in backlog_tasks">
                 <div class="card-body text-dark">
-                    <h5 class="card-title">{{task.title}}</h5>
-                    <p class="card-text">{{task.description}}</p>
+                    <h5 class="card-title">[[ task.title ]]</h5>
+                    <p class="card-text">[[ task.description ]]</p>
                     <a href="#" class="card-link"><i class="fa fa-trash-o"></i></a>
                     <a href="#" class="card-link"><i class="fa fa-pencil-square-o"></i></a>
                 </div>
             </div>
-            {% endfor %}
 
 
         </div>
         <div class="col-sm">
             <h6 class="h6">Todo</h6>
 
-            {% for task in todo_tasks%}
-            <div class="card border-dark mb-3">
+            <div class="card border-dark mb-3" v-for="task in todo_tasks">
                 <div class="card-body text-dark">
-                    <h5 class="card-title">{{task.title}}</h5>
-                    <p class="card-text">{{task.description}}</p>
+                    <h5 class="card-title">[[ task.title ]]</h5>
+                    <p class="card-text">[[ task.description ]]</p>
                     <a href="#" class="card-link"><i class="fa fa-trash-o"></i></a>
                     <a href="#" class="card-link"><i class="fa fa-pencil-square-o"></i></a>
                 </div>
             </div>
-            {% endfor %}
 
         </div>
         <div class="col-sm">
             <h6 class="h6">In Progress</h6>
 
-            {% for task in in_progress_tasks%}
-            <div class="card border-dark mb-3">
+            <div class="card border-dark mb-3" v-for="task in in_progress_tasks">
                 <div class="card-body text-dark">
-                    <h5 class="card-title">{{task.title}}</h5>
-                    <p class="card-text">{{task.description}}</p>
+                    <h5 class="card-title">[[ task.title ]]</h5>
+                    <p class="card-text">[[ task.description ]]</p>
                     <a href="#" class="card-link"><i class="fa fa-trash-o"></i></a>
                     <a href="#" class="card-link"><i class="fa fa-pencil-square-o"></i></a>
                 </div>
             </div>
-            {% endfor %}
         </div>
         <div class="col-sm">
             <h6 class="h6">Done</h6>
 
-            {% for task in done_tasks%}
-            <div class="card border-dark mb-3">
+            <div class="card border-dark mb-3" v-for="task in done_tasks">
                 <div class="card-body text-dark">
-                    <h5 class="card-title">{{task.title}}</h5>
-                    <p class="card-text">{{task.description}}</p>
+                    <h5 class="card-title">[[ task.title ]]</h5>
+                    <p class="card-text">[[ task.description ]]</p>
                     <a href="#" class="card-link"><i class="fa fa-trash-o"></i></a>
                     <a href="#" class="card-link"><i class="fa fa-pencil-square-o"></i></a>
                 </div>
             </div>
-            {% endfor %}
         </div>
 
     </div>
@@ -79,4 +71,35 @@
     </div>
 
 </div>
+
+{{ tasks | json_script:"tasks" }}
+
+{% endblock %}
+
+
+{% block javascript %}
+<script src="https://cdn.jsdelivr.net/npm/vue@2/dist/vue.js"></script>
+
+
+<script>
+    let tasks = JSON.parse(document.getElementById('tasks').textContent);
+
+    let backlog_tasks = tasks.filter(a => a.status === 0);
+    let todo_tasks = tasks.filter(a => a.status === 1);
+    let in_progress_tasks = tasks.filter(a => a.status === 2);
+    let done_tasks = tasks.filter(a => a.status === 3);
+
+
+    let app = new Vue({
+        delimiters: ["[[", "]]"],
+        el: '#vue-app',
+        data: {
+            tasks: tasks,
+            backlog_tasks: backlog_tasks,
+            todo_tasks: todo_tasks,
+            in_progress_tasks: in_progress_tasks,
+            done_tasks: done_tasks,
+        }
+    })
+</script>
 {% endblock %}

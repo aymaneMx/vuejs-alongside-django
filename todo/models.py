@@ -15,6 +15,6 @@ class Task(models.Model):
     def __str__(self):
         return (
             f"task (" 
-            f" title: {self.title}," 
-            f" status: {self.status})"
+            f"title: {self.title}, " 
+            f"status: {self.status})"
         )
