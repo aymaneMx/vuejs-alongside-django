@@ -3,43 +3,37 @@
 {% block title %}Home{% endblock %}
 
 {% block content %}
-<div id="vue-app" class="row justify-content-center">
+<div id="vue-app" class="row justify-content-center bg-white p-5 shadow rounded">
+    <header class="text-center pb-5">
+        <h2 class="h2">Your Tasks!</h2>
+    </header>
 
-    <div class="row bg-white p-5 shadow rounded">
-        <header class="text-center pb-5">
-            <h1 class="h2">Your Tasks!</h1>
-        </header>
-
-        <div class="col-sm">
-            <h6 class="h6">Backlog</h6>
-            <task v-for="task in backlog_tasks" :key="task.id" :task="task"></task>
-
-        </div>
-        <div class="col-sm">
-            <h6 class="h6">Todo</h6>
-            <task v-for="task in todo_tasks" :key="task.id" :task="task"></task>
-
-
-        </div>
-        <div class="col-sm">
-            <h6 class="h6">In Progress</h6>
-            <task v-for="task in in_progress_tasks" :key="task.id" :task="task"></task>
-
-        </div>
-        <div class="col-sm">
-            <h6 class="h6">Done</h6>
-            <task v-for="task in done_tasks" :key="task.id" :task="task"></task>
-
-        </div>
+    <div class="col-sm">
+        <h6 class="h4">Backlog</h6>
+        <task v-for="task in backlog_tasks" :key="task.id" :task="task"></task>
 
     </div>
+    <div class="col-sm">
+        <h6 class="h4">Todo</h6>
+        <task v-for="task in todo_tasks" :key="task.id" :task="task"></task>
 
-    <div class="text-center py-2">
-        <small>
-            <a href="aymaneMx.com" class="text-muted">aymaneMx©</a>
-        </small>
+
     </div>
+    <div class="col-sm">
+        <h6 class="h4">In Progress</h6>
+        <task v-for="task in in_progress_tasks" :key="task.id" :task="task"></task>
 
+    </div>
+    <div class="col-sm">
+        <h6 class="h4">Done</h6>
+        <task v-for="task in done_tasks" :key="task.id" :task="task"></task>
+
+    </div>
+</div>
+<div class="row text-center py-2">
+    <small>
+        <a href="aymaneMx.com" class="text-muted">aymaneMx©</a>
+    </small>
 </div>
 
 {{ tasks | json_script:"tasks" }}
@@ -54,11 +48,6 @@
 <script>
     let tasks = JSON.parse(document.getElementById('tasks').textContent);
 
-    let backlog_tasks = tasks.filter(a => a.status === 0);
-    let todo_tasks = tasks.filter(a => a.status === 1);
-    let in_progress_tasks = tasks.filter(a => a.status === 2);
-    let done_tasks = tasks.filter(a => a.status === 3);
-
     Vue.component('task', {
         delimiters: ["[[", "]]"],
         props: {
@@ -68,15 +57,61 @@
             }
         },
         template: `
-            <div class="card border-dark mb-3">
-                <div class="card-body text-dark">
-                    <h5 class="card-title">[[ task.title ]]</h5>
-                    <p class="card-text">[[ task.description ]]</p>
-                    <a href="#" class="card-link"><i class="fa fa-trash-o"></i></a>
-                    <a href="#" class="card-link"><i class="fa fa-pencil-square-o"></i></a>
+            <div>
+                <div class="card border-dark mb-3" v-show="!isEditing">
+                    <div class="card-body text-dark">
+                        <h6 class="card-title">[[ task.title ]]</h6>
+                        <p class="card-text">[[ task.description ]]</p>
+                        <a href="#" class="card-link" v-on:click="deleteTask(task)"><i class="fa fa-trash-o"></i></a>
+                        <a href="#" class="card-link" v-on:click="showForm" ><i class="fa fa-pencil-square-o"></i></a>
+                        <a href="#" class="card-link" v-on:click="completeTask" v-show="canBeCompleted"><i class="fa fa-check"></i></a>
+
+                    </div>
+                </div>
+
+                <div class="card border-dark mb-3" v-show="isEditing">
+                    <div class="card-body text-dark">
+                        <div class="form-group">
+                            <label>Title</label>
+                            <input type="text" class="form-control form-control-sm" v-model="task.title">
+                        </div>
+                        <div class="form-group">
+                            <label>Description</label>
+                            <input type="text" class="form-control form-control-sm" v-model="task.description">
+                        </div>
+                        <a href="#" class="card-link" v-on:click="hideForm" ><i class="fa fa-check"></i></a>
+
+                    </div>
                 </div>
             </div>
-        `
+        `,
+        data() {
+            return {
+                isEditing: false,
+            };
+        },
+        computed: {
+            canBeCompleted() {
+                return this.task.status !== 3;
+            },
+        },
+        methods: {
+            showForm() {
+                this.isEditing = true;
+            },
+            hideForm() {
+                this.isEditing = false;
+            },
+            deleteTask(task) {
+                this.$parent.deleteTask(task);
+                console.log(this.task);
+            },
+            completeTask(){
+                if (this.task.status < 3){
+                    this.task.status ++;
+                }
+            }
+        },
     });
 
     let app = new Vue({
@@ -84,11 +119,29 @@
         el: '#vue-app',
         data: {
             tasks: tasks,
-            backlog_tasks: backlog_tasks,
-            todo_tasks: todo_tasks,
-            in_progress_tasks: in_progress_tasks,
-            done_tasks: done_tasks,
-        }
+        },
+        computed: {
+            backlog_tasks() {
+                return this.tasks.filter(a => a.status === 0);
+            },
+            todo_tasks() {
+                return this.tasks.filter(a => a.status === 1);
+            },
+            in_progress_tasks() {
+                return this.tasks.filter(a => a.status === 2);
+            },
+            done_tasks() {
+                return this.tasks.filter(a => a.status === 3);
+            },
+        },
+        methods: {
+            deleteTask(task) {
+                const taskIndex = this.tasks.indexOf(task);
+                this.tasks.splice(taskIndex, 1);
+                console.log(this.tasks);
+                console.log(this.task);
+            }
+        },
     });
 
 
