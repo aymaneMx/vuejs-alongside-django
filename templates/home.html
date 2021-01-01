@@ -12,54 +12,24 @@
 
         <div class="col-sm">
             <h6 class="h6">Backlog</h6>
-
-            <div class="card border-dark mb-3" v-for="task in backlog_tasks">
-                <div class="card-body text-dark">
-                    <h5 class="card-title">[[ task.title ]]</h5>
-                    <p class="card-text">[[ task.description ]]</p>
-                    <a href="#" class="card-link"><i class="fa fa-trash-o"></i></a>
-                    <a href="#" class="card-link"><i class="fa fa-pencil-square-o"></i></a>
-                </div>
-            </div>
-
+            <task v-for="task in backlog_tasks" :key="task.id" :task="task"></task>
 
         </div>
         <div class="col-sm">
             <h6 class="h6">Todo</h6>
+            <task v-for="task in todo_tasks" :key="task.id" :task="task"></task>
 
-            <div class="card border-dark mb-3" v-for="task in todo_tasks">
-                <div class="card-body text-dark">
-                    <h5 class="card-title">[[ task.title ]]</h5>
-                    <p class="card-text">[[ task.description ]]</p>
-                    <a href="#" class="card-link"><i class="fa fa-trash-o"></i></a>
-                    <a href="#" class="card-link"><i class="fa fa-pencil-square-o"></i></a>
-                </div>
-            </div>
 
         </div>
         <div class="col-sm">
             <h6 class="h6">In Progress</h6>
+            <task v-for="task in in_progress_tasks" :key="task.id" :task="task"></task>
 
-            <div class="card border-dark mb-3" v-for="task in in_progress_tasks">
-                <div class="card-body text-dark">
-                    <h5 class="card-title">[[ task.title ]]</h5>
-                    <p class="card-text">[[ task.description ]]</p>
-                    <a href="#" class="card-link"><i class="fa fa-trash-o"></i></a>
-                    <a href="#" class="card-link"><i class="fa fa-pencil-square-o"></i></a>
-                </div>
-            </div>
         </div>
         <div class="col-sm">
             <h6 class="h6">Done</h6>
+            <task v-for="task in done_tasks" :key="task.id" :task="task"></task>
 
-            <div class="card border-dark mb-3" v-for="task in done_tasks">
-                <div class="card-body text-dark">
-                    <h5 class="card-title">[[ task.title ]]</h5>
-                    <p class="card-text">[[ task.description ]]</p>
-                    <a href="#" class="card-link"><i class="fa fa-trash-o"></i></a>
-                    <a href="#" class="card-link"><i class="fa fa-pencil-square-o"></i></a>
-                </div>
-            </div>
         </div>
 
     </div>
@@ -89,6 +59,25 @@
     let in_progress_tasks = tasks.filter(a => a.status === 2);
     let done_tasks = tasks.filter(a => a.status === 3);
 
+    Vue.component('task', {
+        delimiters: ["[[", "]]"],
+        props: {
+            task: {
+                type: Object,
+                required: true
+            }
+        },
+        template: `
+            <div class="card border-dark mb-3">
+                <div class="card-body text-dark">
+                    <h5 class="card-title">[[ task.title ]]</h5>
+                    <p class="card-text">[[ task.description ]]</p>
+                    <a href="#" class="card-link"><i class="fa fa-trash-o"></i></a>
+                    <a href="#" class="card-link"><i class="fa fa-pencil-square-o"></i></a>
+                </div>
+            </div>
+        `
+    });
 
     let app = new Vue({
         delimiters: ["[[", "]]"],
@@ -100,6 +89,8 @@
             in_progress_tasks: in_progress_tasks,
             done_tasks: done_tasks,
         }
-    })
+    });
+
+
 </script>
 {% endblock %}
