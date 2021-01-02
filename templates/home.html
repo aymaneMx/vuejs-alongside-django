@@ -1,6 +1,6 @@
 {% extends 'base.html' %}
 
-{% block title %}Home{% endblock %}
+{% block title %}My Tasks{% endblock %}
 
 {% block content %}
 <div id="vue-app" class="row justify-content-center bg-white p-5 shadow rounded">
@@ -8,25 +8,39 @@
         <h2 class="h2">Your Tasks!</h2>
     </header>
 
-    <div class="col-sm">
-        <h6 class="h4">Backlog</h6>
-        <task v-for="task in backlog_tasks" :key="task.id" :task="task"></task>
 
+    <div v-if="errored">
+        <p>We're sorry, we're not able to retrieve this information at the moment, please try back later</p>
     </div>
-    <div class="col-sm">
-        <h6 class="h4">Todo</h6>
-        <task v-for="task in todo_tasks" :key="task.id" :task="task"></task>
+
+    <div v-else>
+        <div v-if="loading">Loading...</div>
+
+        <div v-else class="row">
+
+            <div class="col-sm">
+                <h6 class="h4">Backlog</h6>
+                <task v-for="task in backlog_tasks" :key="task.id" :task="task"></task>
+                <add-task></add-task>
+
+            </div>
+            <div class="col-sm">
+                <h6 class="h4">Todo</h6>
+                <task v-for="task in todo_tasks" :key="task.id" :task="task"></task>
 
 
-    </div>
-    <div class="col-sm">
-        <h6 class="h4">In Progress</h6>
-        <task v-for="task in in_progress_tasks" :key="task.id" :task="task"></task>
+            </div>
+            <div class="col-sm">
+                <h6 class="h4">In Progress</h6>
+                <task v-for="task in in_progress_tasks" :key="task.id" :task="task"></task>
 
-    </div>
-    <div class="col-sm">
-        <h6 class="h4">Done</h6>
-        <task v-for="task in done_tasks" :key="task.id" :task="task"></task>
+            </div>
+            <div class="col-sm">
+                <h6 class="h4">Done</h6>
+                <task v-for="task in done_tasks" :key="task.id" :task="task"></task>
+
+            </div>
+        </div>
 
     </div>
 </div>
@@ -36,17 +50,74 @@
     </small>
 </div>
 
-{{ tasks | json_script:"tasks" }}
-
 {% endblock %}
 
 
 {% block javascript %}
-<script src="https://cdn.jsdelivr.net/npm/vue@2/dist/vue.js"></script>
-
-
 <script>
-    let tasks = JSON.parse(document.getElementById('tasks').textContent);
+    axios.defaults.xsrfCookieName = 'csrftoken';
+    axios.defaults.xsrfHeaderName = "X-CSRFTOKEN";
+
+    Vue.component('add-task', {
+        delimiters: ["[[", "]]"],
+        template: `
+            <div>
+                <div class="card border-dark p3" v-show="!isAdding" v-on:click="showAddForm">
+                    <div class="card-body text-dark">
+                        <i class="fa fa-plus"></i> Add New Task
+                    </div>
+                </div>
+
+                <div class="card border-dark mb-3" v-show="isAdding">
+                    <div class="card-body text-dark">
+                        <div class="form-group">
+                            <label>Title</label>
+                            <input type="text" class="form-control form-control-sm" v-model="title">
+                        </div>
+                        <div class="form-group">
+                            <label>Description</label>
+                            <input type="text" class="form-control form-control-sm" v-model="description">
+                        </div>
+                        <a href="#" class="card-link" v-on:click="createTask" ><i class="fa fa-check"></i></a>
+                        <a href="#" class="card-link" v-on:click="hideForm" ><i class="fa fa-times"></i></a>
+
+                    </div>
+                </div>
+            </div>
+        `,
+        data() {
+            return {
+                isAdding: false,
+                title: "",
+                description: "",
+            };
+        },
+        methods: {
+            showAddForm() {
+                this.isAdding = true;
+            },
+            hideForm() {
+                this.isAdding = false;
+            },
+            createTask() {
+                let url = '/api/';
+                let data = {
+                    "title": this.title,
+                    "description": this.description,
+                };
+                axios
+                    .post(url, data)
+                    .then(response => {
+                        this.isAdding = false;
+                        this.$parent.fetchTasks();
+                    })
+                    .catch(error => {
+                        console.log(error);
+                    });
+            }
+        },
+    });
+
 
     Vue.component('task', {
         delimiters: ["[[", "]]"],
@@ -100,15 +171,35 @@
                 this.isEditing = true;
             },
             hideForm() {
-                this.isEditing = false;
+                let url = '/api/' + this.task.id + '/';
+                let data = {
+                    "title": this.task.title,
+                    "description": this.task.description,
+                };
+                axios
+                    .put(url, data)
+                    .then(response => {
+                        this.isEditing = false;
+                    })
+                    .catch(error => {
+                        console.log(error);
+                    });
             },
             deleteTask(task) {
-                this.$parent.deleteTask(task);
-                console.log(this.task);
+                this.$parent.deleteTaskFromBackend(task.id);
             },
-            completeTask(){
-                if (this.task.status < 3){
-                    this.task.status ++;
+            completeTask() {
+                if (this.canBeCompleted) {
+                    let url = '/api/' + this.task.id + '/';
+                    let new_status = this.task.status + 1;
+                    axios
+                        .patch(url, {"status": new_status})
+                        .then(response => {
+                            this.task.status = response.data.status;
+                        })
+                        .catch(error => {
+                            console.log(error);
+                        });
                 }
             }
         },
@@ -118,7 +209,9 @@
         delimiters: ["[[", "]]"],
         el: '#vue-app',
         data: {
-            tasks: tasks,
+            tasks: [],
+            loading: true,
+            errored: false,
         },
         computed: {
             backlog_tasks() {
@@ -135,13 +228,38 @@
             },
         },
         methods: {
-            deleteTask(task) {
+            deleteTask(task_id) {
+                const task = this.tasks.find((element)=> element.id === task_id);
                 const taskIndex = this.tasks.indexOf(task);
                 this.tasks.splice(taskIndex, 1);
-                console.log(this.tasks);
-                console.log(this.task);
+            },
+            deleteTaskFromBackend(task_id) {
+                let url = '/api/' + task_id + '/delete/';
+                axios
+                    .delete(url)
+                    .then(response => {
+                        this.deleteTask(task_id)
+                    })
+                    .catch(error => {
+                        console.log(error);
+                    });
+            },
+            fetchTasks() {
+                axios
+                    .get('/api/')
+                    .then(response => {
+                        this.tasks = response.data
+                    })
+                    .catch(error => {
+                        console.log(error);
+                        this.errored = true
+                    })
+                    .finally(() => this.loading = false)
             }
         },
+        mounted() {
+            this.fetchTasks();
+        }
     });
 
 

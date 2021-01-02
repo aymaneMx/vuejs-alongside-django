@@ -9,7 +9,7 @@ class Task(models.Model):
         DONE = 3, "done"
 
     title = models.CharField(max_length=50)
-    description = models.TextField()
+    description = models.TextField(blank=True)
     status = models.PositiveIntegerField(choices=Status.choices, default=Status.BACKLOG)
 
     def __str__(self):
