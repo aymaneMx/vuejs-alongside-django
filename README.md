@@ -2,7 +2,7 @@
 
 A simple crud app using Vue alongside Django Template.
 
-![todo app](https://github.com/aymaneMx/vuejs-alongside-django/static/img/demo.png)
+![todo app](static/img/demo.png)
 
 ### get started
 
